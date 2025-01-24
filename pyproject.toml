@@ -1,0 +1,49 @@
+[project]
+name = "flight-metrics"
+version = "0.1.0"
+description = "A flexible data analysis tool for post-flight visualization and processing of IMU datasets, supporting AirbrakesV2 and other rocket data formats."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyqt6>=6.8.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+plot = "flight_metrics.main:run_analyzer"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# UV:
+[tool.uv]
+python-preference = "only-managed"
+
+# HATCH:
+[tool.hatch.build.targets.wheel]
+packages = ["flight_metrics"]
+
+# RUFF:
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+show-fixes = true
+exclude = ["scripts"]
+
+[tool.ruff.lint]
+ignore = ["PLR2004", "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PERF203", "ISC001", "S311"]
+select = ["E", "F", "I", "PL", "UP", "RUF", "PTH", "C4", "B", "PIE", "SIM", "RET", "RSE",
+          "G", "ISC", "PT", "ASYNC", "TCH", "SLOT", "PERF", "PYI", "FLY", "AIR", "Q", "INP", 
+          "W", "YTT", "DTZ", "ARG", "T20", "FURB", "D100", "D101", "D300", "D418",
+          "D419", "S", "NPY"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",  # treat warnings as errors
+]
