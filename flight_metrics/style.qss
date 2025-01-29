@@ -1,3 +1,21 @@
 QWidget {
-    background-color: #ff484646;
+    background-color: #ff292929;
+}
+QListWidget {
+    font-size: 25px;
+    color: #ffdadada;
+}
+QListWidget::item {
+    margin-left: 0px;
+}
+QListWidget::indicator {
+    width: 30px;
+    height: 30px;
+}
+QListWidget::indicator::unchecked {
+    border: 1px solid #ffdadada;
+}
+QListWidget::indicator::checked {
+    border: 2px solid #ffdadada;
+    background-color: #ff898989;
 }

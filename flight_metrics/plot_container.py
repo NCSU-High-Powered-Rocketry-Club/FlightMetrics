@@ -1,9 +1,10 @@
 """."""
 
-from PyQt6.QtWidgets import QGraphicsProxyWidget
 from pyqtgraph import GraphicsLayout
+from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget
 
 from flight_metrics.graph import Graph
+from flight_metrics.range_slider import RangeSlider
 from flight_metrics.state_button import StateButton
 
 
@@ -39,4 +40,8 @@ class PlotContainer(GraphicsLayout):
         button_names = ["Standby", "Motor Burn", "Coast", "Freefall", "Landed"]
         for i, name in enumerate(button_names):
             state_button = StateButton(name)
+            state_button.setMinimumHeight(50)
             self._toolbar_layout.addItem(state_button, row=0, col=i)
+
+        slider = RangeSlider(min_value=0,max_value=1000)
+        self._toolbar_layout.addItem(slider,row=1,col=0,colspan=5)
