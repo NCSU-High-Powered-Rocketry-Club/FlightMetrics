@@ -31,7 +31,7 @@ class MainWindow(GraphicsView):
         right_layout.setFixedWidth(300)
 
         # adding launch data selector on left side
-        flight_selector = FlightSelector()
+        flight_selector = FlightSelector(self)
         left_layout.addItem(flight_selector)
 
         # adding plot container in middle
@@ -41,3 +41,6 @@ class MainWindow(GraphicsView):
         # adding data selector to right
         data_selector = DataSelector()
         right_layout.addItem(data_selector)
+
+    def update_data(self, log_names: list) -> None:
+        pass

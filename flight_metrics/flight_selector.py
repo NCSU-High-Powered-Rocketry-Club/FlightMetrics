@@ -2,25 +2,28 @@
 
 from pathlib import Path
 
+from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtCore import Qt
-from pyqtgraph import GraphicsLayout, LabelItem
-from pyqtgraph.Qt.QtWidgets import QCheckBox, QGraphicsProxyWidget, QListWidget, QListWidgetItem
+from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget, QListWidget, QListWidgetItem
 
 
 class FlightSelector(GraphicsLayout):
     """."""
 
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
-
-        self._get_flights()
+        self._parent = parent
+        self._checked_flights: list = []
 
         self.list_widget = QListWidget()
-        self._make_checklist()
-
         proxy_list = QGraphicsProxyWidget()
         proxy_list.setWidget(self.list_widget)
         self.addItem(proxy_list)
+
+        self._get_flights()
+        self._make_checklist()
+
+
 
 
 
@@ -34,3 +37,13 @@ class FlightSelector(GraphicsLayout):
             list_item.setFlags(list_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             list_item.setCheckState(Qt.CheckState.Unchecked)
             self.list_widget.addItem(list_item)
+        self.list_widget.itemChanged.connect(self.item_changed)
+
+    def item_changed(self, item: QListWidgetItem):
+        if item.checkState() == Qt.CheckState.Checked:
+            self._checked_flights.append(item.text())
+        if item.checkState() == Qt.CheckState.Unchecked:
+            self._checked_flights.remove(item.text())
+
+        self._parent.update_data(sorted(self._checked_flights))
+

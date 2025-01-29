@@ -94,4 +94,10 @@ class SliderWidget(QWidget):
         x = max(margin, min(x, width - margin))
         return round(self.min_value + (x - margin) / (width - 2 * margin) * (self.max_value - self.min_value))
 
+    def set_handles(self, low_value, high_value):
+        self.low_value = low_value
+        self.high_value = high_value
+        self.rangeChanged.emit(self.low_value,self.high_value)
+        self.update()
+
 
