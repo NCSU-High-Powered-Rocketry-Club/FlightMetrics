@@ -22,9 +22,9 @@ class MainWindow(GraphicsView):
 
     def _set_layouts(self) -> None:
         # splitting layout into 3 columns
-        left_layout = self._layout.addLayout(row=0, col=0)
-        mid_layout = self._layout.addLayout(row=0, col=1)
-        right_layout = self._layout.addLayout(row=0, col=2)
+        left_layout = self._layout.addLayout(row=0, col=0, rowspan=1)
+        mid_layout = self._layout.addLayout(row=0, col=1, rowspan=1)
+        right_layout = self._layout.addLayout(row=0, col=2, rowspan=1)
 
         # setting column widths
         left_layout.setFixedWidth(300)

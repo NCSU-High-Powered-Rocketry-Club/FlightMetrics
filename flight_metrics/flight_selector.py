@@ -6,6 +6,8 @@ from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtCore import Qt
 from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget, QListWidget, QListWidgetItem
 
+from flight_metrics.settings import SettingsButton
+
 
 class FlightSelector(GraphicsLayout):
     """."""
@@ -20,12 +22,14 @@ class FlightSelector(GraphicsLayout):
         proxy_list.setWidget(self.list_widget)
         self.addItem(proxy_list)
 
+        # make small container for settings at bottom
+        self._settings_layout = self.addLayout(row=1, col=0)
+        self._settings_layout.setFixedHeight(50)
+        self._settings_button = SettingsButton()
+        self._settings_layout.addItem(self._settings_button)
+
         self._get_flights()
         self._make_checklist()
-
-
-
-
 
     def _get_flights(self):
         log_dir = Path(__file__).parent.parent / "launch_logs"
@@ -46,4 +50,3 @@ class FlightSelector(GraphicsLayout):
             self._checked_flights.remove(item.text())
 
         self._parent.update_data(sorted(self._checked_flights))
-
