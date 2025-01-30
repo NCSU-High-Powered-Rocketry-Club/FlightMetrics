@@ -1,10 +1,10 @@
 """."""
 
-from pyqtgraph.Qt.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel
 from pyqtgraph.Qt.QtGui import QFont
+from pyqtgraph.Qt.QtWidgets import QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-from flight_metrics.state_button import ButtonProxy
 from flight_metrics.pull_data_button import PullDataButton
+from flight_metrics.state_button import ButtonProxy
 
 
 class SettingsButton(ButtonProxy):

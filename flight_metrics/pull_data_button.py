@@ -22,11 +22,14 @@ class PullDataButton(QPushButton):
     def set_style(self) -> None:
         self.setText("Pull")
         self.setFixedSize(40, 40)
+        self.setCheckable(True)
 
     def button_clicked(self) -> None:
         """Run AirbrakesV2 (uv run mock -d -f -l -p [launch file path]). Then rename and move the
         resulting log files to this repo"""
         if not self._is_running:
+            self._is_running = True
+            self.setChecked(True)
             airbrakes_path = self._get_airbrakes_path()
             self._run_airbrakes(airbrakes_path)
             self._collect_files(airbrakes_path)
@@ -49,8 +52,6 @@ class PullDataButton(QPushButton):
 
             if not (airbrakes_path / Path(airbrakes_launch_log_path)).resolve().exists():
                 raise FileNotFoundError(f"Launch file not found: {airbrakes_launch_log_path}")
-            print((airbrakes_path / Path(airbrakes_launch_log_path)).resolve())
-
 
             command = [
                 "uv",
@@ -67,7 +68,6 @@ class PullDataButton(QPushButton):
             command = " ".join(command)
             try:
                 # Run the command inside AirbrakesV2 directory
-                print(airbrakes_path)
                 process = subprocess.run(  # noqa: S602
                     command,
                     capture_output=True,
@@ -93,7 +93,7 @@ class PullDataButton(QPushButton):
             raise FileNotFoundError(f"Logs directory not found: {logs_dir}")
 
         # Define destination folder (FlightMetrics repo)
-        flight_metrics_path = Path(__file__).parent.parent.parent
+        flight_metrics_path = Path(__file__).parent.parent
         launch_logs_dir = flight_metrics_path / "launch_logs"
 
         # Get all log files sorted by modification time (newest first)
@@ -107,9 +107,16 @@ class PullDataButton(QPushButton):
         latest_logs = log_files[: len(LAUNCH_PATHS)]
         if len(latest_logs) < len(LAUNCH_PATHS):
             print(
-                f"Warning: Only found {len(latest_logs)} log files, expected {len(LAUNCH_PATHS)}.")
+                f"Warning: Only found {len(latest_logs)} log files, expected {len(LAUNCH_PATHS)}."
+            )
 
         # Iterate through recent logs and rename/move them
         for log_file, new_name in zip(latest_logs, LAUNCH_PATHS, strict=False):
             new_file = launch_logs_dir / new_name
+            if not new_file.exists():
+                with Path.open(new_file, "x"):
+                    pass
             shutil.move(log_file, new_file)  # Move and overwrite existing files
+            print("Done!")
+            self._is_running = False
+            self.setChecked(False)

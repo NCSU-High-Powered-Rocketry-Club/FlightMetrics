@@ -31,7 +31,7 @@ class SliderWidget(QWidget):
         self.setMouseTracking(True)
         self.dragging = None
 
-    def paintEvent(self, event):
+    def paintEvent(self, event):  # noqa: ARG002
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -95,7 +95,7 @@ class SliderWidget(QWidget):
         self.rangeChanged.emit(self.low_value, self.high_value)
         self.update()
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event):  # noqa: ARG002
         self.dragging = None
 
     def _value_to_x(self, value):

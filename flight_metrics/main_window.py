@@ -2,6 +2,7 @@
 
 from pyqtgraph import GraphicsLayout, GraphicsView
 
+from flight_metrics.data_manager import DataManager
 from flight_metrics.data_selector import DataSelector
 from flight_metrics.flight_selector import FlightSelector
 from flight_metrics.plot_container import PlotContainer
@@ -19,6 +20,7 @@ class MainWindow(GraphicsView):
         self.setCentralItem(layout)
         self._layout = layout
         self._set_layouts()
+        self._data_manager = DataManager()
 
     def _set_layouts(self) -> None:
         # splitting layout into 3 columns
@@ -42,5 +44,7 @@ class MainWindow(GraphicsView):
         data_selector = DataSelector()
         right_layout.addItem(data_selector)
 
-    def update_data(self, log_names: list) -> None:
-        pass
+    def update_data(self, log_names: list[str]) -> None:
+        # log names is a list of the names of the logs, in title case with spaces instead of
+        # underscores, and some leading whitespace.
+        log_files = [name.lower().strip().replace(" ", "_") + ".csv" for name in log_names]
