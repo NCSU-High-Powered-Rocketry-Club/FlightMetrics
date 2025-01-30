@@ -55,26 +55,30 @@ class PullDataButton(QPushButton):
             command = [
                 "uv",
                 "run",
+                "--directory",
+                str(airbrakes_path),  # Change working directory to AirbrakesV2 repo
                 "mock",
                 "-d",
                 "-f",
                 "-l",
                 "-p",
-                str(Path(airbrakes_launch_log_path).resolve()),
+                str((airbrakes_path / Path(airbrakes_launch_log_path)).resolve()),
             ]
+            command = " ".join(command)
             try:
                 # Run the command inside AirbrakesV2 directory
                 print(airbrakes_path)
-                process = subprocess.run(  # noqa: S603
+                process = subprocess.run(  # noqa: S602
                     command,
-                    cwd=airbrakes_path,  # Change working directory to AirbrakesV2 repo
                     capture_output=True,
                     text=True,
-                    shell=False,
-                    check=False,
+                    shell=True,
+                    check=True,
                 )
                 if process.stdout:
                     print(f"AirbrakesV2 Output:\n{process.stdout}")
+                if process.stderr:
+                    print(f"AirbrakesV2 Error Output:\n{process.stderr}")
             except subprocess.CalledProcessError as e:
                 # Print error output if the command fails
                 print(f"Error running AirbrakesV2:\n{e.stderr}")
