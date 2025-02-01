@@ -1,16 +1,19 @@
 """."""
+from typing import TYPE_CHECKING
 
 from pyqtgraph.Qt.QtCore import QPoint, Qt, pyqtSignal
 from pyqtgraph.Qt.QtGui import QBrush, QColor, QPainter, QPen
 from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget, QWidget
 
+if TYPE_CHECKING:
+    from flight_metrics.plot_container import PlotContainer
 
 class RangeSlider(QGraphicsProxyWidget):
     """A QGraphicsProxyWidget containing the range slider widget."""
 
-    def __init__(self, min_value=0, max_value=100, start_min=20, start_max=80):
+    def __init__(self, parent, min_value=0, max_value=100, start_min=20, start_max=80):
         super().__init__()
-        self.slider = SliderWidget(min_value, max_value, start_min, start_max)
+        self.slider = SliderWidget(parent, min_value, max_value, start_min, start_max)
         self.setWidget(self.slider)
 
 
@@ -19,8 +22,10 @@ class SliderWidget(QWidget):
 
     rangeChanged = pyqtSignal(int, int)
 
-    def __init__(self, min_value=0, max_value=100, start_min=20, start_max=80):
+    def __init__(self, parent: "PlotContainer", min_value=0, max_value=100, start_min=20, start_max=80):
         super().__init__()
+        self._parent = parent
+
         self.min_value = min_value
         self.max_value = max_value
         self.low_value = start_min
@@ -30,6 +35,9 @@ class SliderWidget(QWidget):
         self.setMinimumSize(300, 40)
         self.setMouseTracking(True)
         self.dragging = None
+
+        # slot for the rangeChanged signal to connect to
+        self.rangeChanged.connect(self._on_range_change)
 
     def paintEvent(self, event):  # noqa: ARG002
         painter = QPainter(self)
@@ -114,7 +122,12 @@ class SliderWidget(QWidget):
         )
 
     def set_handles(self, low_value, high_value):
-        self.low_value = low_value
-        self.high_value = high_value
+        # weird stuff happens to low value if it's not typecasted to int before emitting it
+        # seems that keeping high as float works, but low as float will be from -maxint to +maxint
+        self.low_value = int(low_value)
+        self.high_value = int(high_value)
         self.rangeChanged.emit(self.low_value, self.high_value)
         self.update()
+
+    def _on_range_change(self, low, high):
+        self._parent.range_update(low, high)

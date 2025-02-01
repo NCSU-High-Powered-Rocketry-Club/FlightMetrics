@@ -1,7 +1,11 @@
 """."""
+from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QGraphicsProxyWidget
 from pyqtgraph.Qt.QtWidgets import QPushButton
+
+if TYPE_CHECKING:
+    from flight_metrics.plot_container import PlotContainer
 
 
 class ButtonProxy(QGraphicsProxyWidget):
@@ -16,7 +20,7 @@ class ButtonProxy(QGraphicsProxyWidget):
 class StateButton(ButtonProxy):
     """."""
 
-    def __init__(self, parent, state_identifier):
+    def __init__(self, parent: "PlotContainer", state_identifier):
         super().__init__()
         self._parent = parent
         self.state = state_identifier
@@ -45,4 +49,8 @@ class StateButton(ButtonProxy):
     def button_changed(self) -> None:
         """When button is clicked, send its ID to the parent container so that it
         can update the slider"""
-        self._parent.quick_set_slider(self._state_id)
+        # we want the parent to control the logic on if this is a valid button click or not, so
+        # don't check/uncheck the button when clicked. This will be done by the PlotContainer
+        # TODO: find a better way to do this
+        self.button.setChecked(not self.button.isChecked())
+        self._parent.check_new_state(self._state_id)
