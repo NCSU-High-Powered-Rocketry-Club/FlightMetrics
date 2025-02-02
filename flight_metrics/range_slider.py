@@ -1,4 +1,5 @@
 """."""
+
 from typing import TYPE_CHECKING
 
 from pyqtgraph.Qt.QtCore import QPoint, Qt, pyqtSignal
@@ -7,6 +8,7 @@ from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget, QWidget
 
 if TYPE_CHECKING:
     from flight_metrics.plot_container import PlotContainer
+
 
 class RangeSlider(QGraphicsProxyWidget):
     """A QGraphicsProxyWidget containing the range slider widget."""
@@ -22,7 +24,9 @@ class SliderWidget(QWidget):
 
     rangeChanged = pyqtSignal(int, int)
 
-    def __init__(self, parent: "PlotContainer", min_value=0, max_value=100, start_min=20, start_max=80):
+    def __init__(
+        self, parent: "PlotContainer", min_value=0, max_value=100, start_min=20, start_max=80
+    ):
         super().__init__()
         self._parent = parent
 
@@ -80,6 +84,7 @@ class SliderWidget(QWidget):
             self.dragging = "low"
         elif abs(x - high_x) <= self.handle_radius:
             self.dragging = "high"
+        self._parent.range_update(self.low_value, self.high_value, scatter_option=0)
 
     def mouseMoveEvent(self, event):
         if self.dragging is None:
@@ -105,6 +110,7 @@ class SliderWidget(QWidget):
 
     def mouseReleaseEvent(self, event):  # noqa: ARG002
         self.dragging = None
+        self._parent.range_update(self.low_value, self.high_value, scatter_option=1)
 
     def _value_to_x(self, value):
         width = self.width()
@@ -126,7 +132,8 @@ class SliderWidget(QWidget):
         # seems that keeping high as float works, but low as float will be from -maxint to +maxint
         self.low_value = int(low_value)
         self.high_value = int(high_value)
-        self.rangeChanged.emit(self.low_value, self.high_value)
+        # we dont emit the signal because we want to specifically say that the scatter option = 1
+        self._parent.range_update(self.low_value, self.high_value, scatter_option=1)
         self.update()
 
     def _on_range_change(self, low, high):

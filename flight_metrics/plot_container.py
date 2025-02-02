@@ -14,19 +14,28 @@ class PlotContainer(GraphicsLayout):
     def __init__(self):
         super().__init__()
 
-        self._buttons: list[StateButton] = [] # the state button objects
-        self._selected_states: list = [0, 1, 2, 3, 4] # the currently selected states
+        self._buttons: list[StateButton] = []  # the state button objects
+        self._selected_states: list = [0, 1, 2, 3, 4]  # the currently selected states
         # a list of the end row number of each state
         self._state_ranges: list[list[int]] = [
-            [10000,],
-            [14000,],
-            [40000,],
-            [200000,],
-            [205000,],
-            ]
+            [
+                10000,
+            ],
+            [
+                14000,
+            ],
+            [
+                40000,
+            ],
+            [
+                200000,
+            ],
+            [
+                205000,
+            ],
+        ]
 
         self._setup()
-
 
     def _setup(self) -> None:
         self._plot_layout = self.addLayout(row=0, col=0)
@@ -65,7 +74,7 @@ class PlotContainer(GraphicsLayout):
             max_value=max(self._state_ranges[-1]),
             start_min=0,
             start_max=max(self._state_ranges[-1]),
-            )
+        )
         self._toolbar_layout.addItem(self._slider, row=1, col=0, colspan=5)
 
     def check_new_state(self, state_id: int) -> None:
@@ -83,14 +92,16 @@ class PlotContainer(GraphicsLayout):
             # valid selections are only those that are the minimum or maximum of the selected state
             # list or minimum - 1, maximum + 1.
             allowable_selections = [
-                min(self._selected_states)-1,
+                min(self._selected_states) - 1,
                 min(self._selected_states),
                 max(self._selected_states),
-                max(self._selected_states)+1,
-                ]
+                max(self._selected_states) + 1,
+            ]
             if state_id in allowable_selections:
                 button.setChecked(not button.isChecked())
-                self._selected_states.remove(state_id) if state_id in self._selected_states else self._selected_states.append(state_id)
+                self._selected_states.remove(
+                    state_id
+                ) if state_id in self._selected_states else self._selected_states.append(state_id)
                 self._quick_set_slider(state_id)
 
     def _quick_set_slider(self, state_id: int) -> None:
@@ -112,8 +123,9 @@ class PlotContainer(GraphicsLayout):
                 low_val = min(self._selected_states) * (max(self._state_ranges[-1]) / 5)
             self._slider.slider.set_handles(low_val, high_val)
 
-    def range_update(self, low: int, high: int) -> None:
-        """called whenever the slider range updates"""
+    def range_update(self, low: int, high: int, scatter_option: int | None = None) -> None:
+        """called whenever the slider range updates. scatter_option is either 0 (initial click),
+        None (currently sliding), or 1 (mouse released)"""
         self._graph.update_graph_limits(low, high)
-
-
+        if scatter_option is not None:
+            self._graph.update_scatter_limits(scatter_option)
