@@ -1,6 +1,7 @@
 """."""
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtCore import Qt
@@ -8,11 +9,14 @@ from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget, QListWidget, QListWidge
 
 from flight_metrics.settings import SettingsButton
 
+if TYPE_CHECKING:
+    from flight_metrics.main_window import MainWindow
+
 
 class FlightSelector(GraphicsLayout):
     """."""
 
-    def __init__(self, parent):
+    def __init__(self, parent: "MainWindow"):
         super().__init__()
         self._parent = parent
         self._checked_flights: list = []
@@ -45,8 +49,7 @@ class FlightSelector(GraphicsLayout):
 
     def item_changed(self, item: QListWidgetItem):
         if item.checkState() == Qt.CheckState.Checked:
-            self._checked_flights.append(item.text())
+            self._checked_flights.append(item.text().strip())
         if item.checkState() == Qt.CheckState.Unchecked:
-            self._checked_flights.remove(item.text())
-
+            self._checked_flights.remove(item.text().strip())
         self._parent.update_data(sorted(self._checked_flights))

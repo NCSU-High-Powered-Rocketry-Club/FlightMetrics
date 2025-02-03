@@ -96,27 +96,24 @@ class PullDataButton(QPushButton):
         flight_metrics_path = Path(__file__).parent.parent
         launch_logs_dir = flight_metrics_path / "launch_logs"
 
-        # Get all log files sorted by modification time (newest first)
-        log_files = sorted(
-            logs_dir.glob("log_*.csv"),
-            key=lambda f: f.stat().st_mtime,  # Sort by last modified time
-            reverse=True,  # Newest first
-        )
+        # Get all log files sorted alphabetically
+        log_files = sorted(logs_dir.glob("log_*.csv"))
 
-        # Take the most recent logs, same length as LAUNCH_PATHS
-        latest_logs = log_files[: len(LAUNCH_PATHS)]
+        # Take the last logs, same length as LAUNCH_PATHS
+        latest_logs = log_files[len(log_files)-len(LAUNCH_PATHS) :]
         if len(latest_logs) < len(LAUNCH_PATHS):
             print(
                 f"Warning: Only found {len(latest_logs)} log files, expected {len(LAUNCH_PATHS)}."
             )
 
-        # Iterate through recent logs and rename/move them
+        # Iterate through the logs and rename/move them
         for log_file, new_name in zip(latest_logs, LAUNCH_PATHS, strict=False):
+            print(log_file)
             new_file = launch_logs_dir / new_name
             if not new_file.exists():
                 with Path.open(new_file, "x"):
                     pass
-            shutil.move(log_file, new_file)  # Move and overwrite existing files
-            print("Done!")
-            self._is_running = False
-            self.setChecked(False)
+            shutil.copy(log_file, new_file)  # Move and overwrite existing files
+        print("Done!")
+        self._is_running = False
+        self.setChecked(False)

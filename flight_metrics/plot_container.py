@@ -3,6 +3,7 @@
 from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget
 
+from flight_metrics.data_manager import DataManager
 from flight_metrics.graph import Graph
 from flight_metrics.range_slider import RangeSlider
 from flight_metrics.state_button import StateButton
@@ -11,9 +12,9 @@ from flight_metrics.state_button import StateButton
 class PlotContainer(GraphicsLayout):
     """."""
 
-    def __init__(self):
+    def __init__(self, data_manager: DataManager):
         super().__init__()
-
+        self._data_manager: DataManager = data_manager
         self._buttons: list[StateButton] = []  # the state button objects
         self._selected_states: list = [0, 1, 2, 3, 4]  # the currently selected states
         # a list of the end row number of each state

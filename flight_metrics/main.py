@@ -16,6 +16,10 @@ def run_analyzer() -> None:
     app.setStyleSheet(stylesheet)
     win = MainWindow()
     win.show()
+
+    # We want to load the data after everything is shown, so it feels more responsive
+    win._data_manager._load_logs()
+
     sys.exit(app.exec())
 
 

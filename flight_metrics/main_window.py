@@ -19,8 +19,8 @@ class MainWindow(GraphicsView):
         layout = GraphicsLayout(border=(100, 100, 100))
         self.setCentralItem(layout)
         self._layout = layout
+        self._data_manager = DataManager(self)
         self._set_layouts()
-        self._data_manager = DataManager()
 
     def _set_layouts(self) -> None:
         # splitting layout into 3 columns
@@ -37,7 +37,7 @@ class MainWindow(GraphicsView):
         left_layout.addItem(flight_selector)
 
         # adding plot container in middle
-        plot_container = PlotContainer()
+        plot_container = PlotContainer(data_manager=self._data_manager)
         mid_layout.addItem(plot_container)
 
         # adding data selector to right
@@ -45,6 +45,7 @@ class MainWindow(GraphicsView):
         right_layout.addItem(data_selector)
 
     def update_data(self, log_names: list[str]) -> None:
+        """."""
         # log names is a list of the names of the logs, in title case with spaces instead of
         # underscores, and some leading whitespace.
-        log_files = [name.lower().strip().replace(" ", "_") + ".csv" for name in log_names]
+        self._data_manager.refresh_data(log_names)
