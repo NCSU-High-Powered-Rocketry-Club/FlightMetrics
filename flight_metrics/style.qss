@@ -19,3 +19,23 @@ QListWidget::indicator::checked {
     border: 2px solid #ffdadada;
     background-color: #ff898989;
 }
+
+#data_selector_list {
+    font-size: 15px;
+    color: #ffdadada;
+}
+#data_selector_list::item {
+    margin-left: 0px;
+}
+#data_selector_list::indicator {
+    width: 15px;
+    height: 15px;
+}
+#data_selector_list::indicator::unchecked {
+    border: 1px solid #ffdadada;
+}
+#data_selector_list::indicator::checked {
+    border: 2px solid #ffdadada;
+    background-color: #ff898989;
+}
+

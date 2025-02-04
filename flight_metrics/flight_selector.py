@@ -25,6 +25,7 @@ class FlightSelector(GraphicsLayout):
         proxy_list = QGraphicsProxyWidget()
         proxy_list.setWidget(self.list_widget)
         self.addItem(proxy_list)
+        self.list_widget.setObjectName("flight_selector_list")
 
         # make small container for settings at bottom
         self._settings_layout = self.addLayout(row=1, col=0)
@@ -52,4 +53,6 @@ class FlightSelector(GraphicsLayout):
             self._checked_flights.append(item.text().strip())
         if item.checkState() == Qt.CheckState.Unchecked:
             self._checked_flights.remove(item.text().strip())
-        self._parent.update_data(sorted(self._checked_flights))
+        self._parent.update_data_manager(sorted(self._checked_flights))
+
+

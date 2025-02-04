@@ -2,7 +2,6 @@
 
 import numpy as np
 from pyqtgraph import PlotItem, PlotWidget, ScatterPlotItem, TextItem, mkBrush
-from pyqtgraph.Qt.QtCore import Qt
 
 
 class Graph(PlotWidget):
@@ -76,3 +75,10 @@ class Graph(PlotWidget):
             self.scatter.setOpacity(
                 0.5
             ) if num_points_on_screen <= 200 else self.scatter.setOpacity(0.001)
+
+    def set_graph_data(self, x: list, y: list[list]):
+        """plots the data"""
+
+        #self._x = x
+        #self._y = y[0][0]
+

@@ -23,6 +23,8 @@ class MainWindow(GraphicsView):
         self._set_layouts()
 
     def _set_layouts(self) -> None:
+        """Configures the main window's layout and initializes the plot, flight selector, and
+        data selector"""
         # splitting layout into 3 columns
         left_layout = self._layout.addLayout(row=0, col=0, rowspan=1)
         mid_layout = self._layout.addLayout(row=0, col=1, rowspan=1)
@@ -33,19 +35,31 @@ class MainWindow(GraphicsView):
         right_layout.setFixedWidth(300)
 
         # adding launch data selector on left side
-        flight_selector = FlightSelector(self)
-        left_layout.addItem(flight_selector)
+        self.flight_selector = FlightSelector(self)
+        left_layout.addItem(self.flight_selector)
 
         # adding plot container in middle
-        plot_container = PlotContainer(data_manager=self._data_manager)
-        mid_layout.addItem(plot_container)
+        self._plot_container = PlotContainer(data_manager=self._data_manager)
+        mid_layout.addItem(self._plot_container)
 
         # adding data selector to right
-        data_selector = DataSelector()
-        right_layout.addItem(data_selector)
+        self._data_selector = DataSelector(self)
+        right_layout.addItem(self._data_selector)
 
-    def update_data(self, log_names: list[str]) -> None:
-        """."""
+    def update_data_manager(self, log_names: list[str]) -> None:
+        """when a new flight is selected or removed in flight selector, this method is called
+        which tells the data manager to refresh the available data sets"""
         # log names is a list of the names of the logs, in title case with spaces instead of
         # underscores, and some leading whitespace.
         self._data_manager.refresh_data(log_names)
+
+    def update_data(self, unique_headers: set) -> None:
+        """Using the unique headers from data manager, updates the data selector with the
+        available headers"""
+        self._data_selector.update_headers(unique_headers)
+
+    def update_plot(self, columns_to_plot: list) -> None:
+        """Updates the plot with the currently selected data."""
+        data = self._data_manager.get_columns(self, columns_to_plot)
+        print(data)
+        #self._plot_container._graph.set_graph_data(data[0], data[1])
