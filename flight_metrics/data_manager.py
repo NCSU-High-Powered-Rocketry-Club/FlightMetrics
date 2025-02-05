@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from pyqtgraph.Qt.QtCore import pyqtSignal, QObject
+from pyqtgraph.Qt.QtCore import QObject, pyqtSignal
 
 from flight_metrics.constants import LAUNCH_PATHS
 

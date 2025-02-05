@@ -41,9 +41,9 @@ class SliderWidget(QWidget):
         self.dragging = None
 
         # slot for the rangeChanged signal to connect to
-        self.rangeChanged.connect(self._on_range_change)
+        #self.rangeChanged.connect(self._on_range_change)
 
-    def paintEvent(self, event):  # noqa: ARG002
+    def paintEvent(self, _event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -84,7 +84,6 @@ class SliderWidget(QWidget):
             self.dragging = "low"
         elif abs(x - high_x) <= self.handle_radius:
             self.dragging = "high"
-        self._parent.range_update(self.low_value, self.high_value)
 
     def mouseMoveEvent(self, event):
         if self.dragging is None:
@@ -108,7 +107,7 @@ class SliderWidget(QWidget):
         self.rangeChanged.emit(self.low_value, self.high_value)
         self.update()
 
-    def mouseReleaseEvent(self, event):  # noqa: ARG002
+    def mouseReleaseEvent(self, _event):
         self.dragging = None
 
     def _value_to_x(self, value):
@@ -126,14 +125,25 @@ class SliderWidget(QWidget):
             self.min_value + (x - margin) / (width - 2 * margin) * (self.max_value - self.min_value)
         )
 
-    def set_handles(self, low_value, high_value):
-        # weird stuff happens to low value if it's not typecasted to int before emitting it
-        # seems that keeping high as float works, but low as float will be from -maxint to +maxint
-        self.low_value = int(low_value)
-        self.high_value = int(high_value)
-
-        self.rangeChanged.emit(low_value, high_value)
+    def set_range(self, datasets) -> None:
+        """When a dataset is added or removed, update the range the slider can move to"""
+        lengths = [len(df) for df in datasets]
+        self.max_value = max(lengths)
+        self.high_value = min(self.high_value, self.max_value)
+        # this only would occur if there are currently no datasets selected, in which case, we don't
+        # care about preserving the user's current slider range
+        if self.high_value == 1:
+            self.high_value = self.max_value
+        self.rangeChanged.emit(self.low_value, self.high_value)
         self.update()
 
-    def _on_range_change(self, low, high):
-        self._parent.range_update(low, high)
+    def state_button_update(self, low: int, high: int) -> None:
+        """."""
+        if low == 0 and high == 0:
+            low = self.min_value
+            high = self.max_value
+
+        self.low_value = low
+        self.high_value = high
+        self.rangeChanged.emit(low, high)
+        self.update()

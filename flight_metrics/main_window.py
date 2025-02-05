@@ -25,6 +25,7 @@ class MainWindow(GraphicsView):
         self.flight_selector.flight_changed.connect(self.data_manager.update_flights)
         self.data_manager.datasets_changed.connect(self.data_selector.update_fields)
         self.data_manager.datasets_changed.connect(self.plot_container.update_state_rows)
+        self.data_manager.datasets_changed.connect(self.plot_container._slider.slider.set_range)
         self.data_selector.fields_changed.connect(self.data_manager.get_data)
 
     def _set_layouts(self) -> None:
@@ -44,7 +45,7 @@ class MainWindow(GraphicsView):
         left_layout.addItem(self.flight_selector)
 
         # adding plot container in middle
-        self.plot_container = PlotContainer(parent=self, data_manager=self.data_manager)
+        self.plot_container = PlotContainer(data_manager=self.data_manager)
         mid_layout.addItem(self.plot_container)
 
         # adding data selector to right
@@ -71,22 +72,3 @@ class MainWindow(GraphicsView):
         slider.max_value = len(data[0])
         slider.update()
 
-    # def state_button_updated(self, selected_states: list, new_state: int) -> None:
-    #     """When a valid state button is selected, this moves the slider"""
-    #     slider = self.plot_container._slider.slider
-
-    #     low_val = slider.low_value
-    #     high_val = slider.high_value
-
-    #     if not selected_states:
-    #         # If the list is empty, min() and max() will error, so instead just set the handles
-    #         # to whatever the minimum value currently is.
-    #         slider.set_handles(low_val, low_val)
-    #     else:
-    #         # determine which slider should move. We don't want both to be set, becuase it will
-    #         # override any fine-tuning on both sliders.
-    #         if max(selected_states) == new_state or max(selected_states) + 1 == new_state:
-    #             high_val = (max(selected_states) + 1) * (max(state_ranges[-1]) / 5)
-    #         if min(selected_states) == new_state or min(selected_states) - 1 == new_state:
-    #             low_val = min(selected_states) * (max(state_ranges[-1]) / 5)
-    #         slider.set_handles(low_val, high_val)
