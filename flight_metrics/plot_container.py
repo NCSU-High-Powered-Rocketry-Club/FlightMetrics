@@ -1,4 +1,5 @@
 """."""
+from typing import TYPE_CHECKING
 
 from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget
@@ -8,12 +9,16 @@ from flight_metrics.graph import Graph
 from flight_metrics.range_slider import RangeSlider
 from flight_metrics.state_button import StateButton
 
+if TYPE_CHECKING:
+    from flight_metrics.main_window import MainWindow
+
 
 class PlotContainer(GraphicsLayout):
     """."""
 
-    def __init__(self, data_manager: DataManager):
+    def __init__(self, parent: "MainWindow", data_manager: DataManager):
         super().__init__()
+        self._parent = parent
         self._data_manager: DataManager = data_manager
         self._buttons: list[StateButton] = []  # the state button objects
         self._selected_states: list = [0, 1, 2, 3, 4]  # the currently selected states
@@ -88,7 +93,7 @@ class PlotContainer(GraphicsLayout):
         if not self._selected_states:
             button.setChecked(True)
             self._selected_states.append(state_id)
-            self._quick_set_slider(state_id)
+            self._parent.state_button_updated(self._selected_states, state_id)
         else:
             # valid selections are only those that are the minimum or maximum of the selected state
             # list or minimum - 1, maximum + 1.
@@ -103,30 +108,10 @@ class PlotContainer(GraphicsLayout):
                 self._selected_states.remove(
                     state_id
                 ) if state_id in self._selected_states else self._selected_states.append(state_id)
-                self._quick_set_slider(state_id)
+                self._parent.state_button_updated(self._selected_states, state_id)
 
-    def _quick_set_slider(self, state_id: int) -> None:
-        """When a valid state button is selected, the range slider moves to the selected state"""
 
-        low_val = self._slider.slider.low_value
-        high_val = self._slider.slider.high_value
-
-        if not self._selected_states:
-            # If the list is empty, min() and max() will error, so instead just set the handles
-            # to whatever the minimum value currently is.
-            self._slider.slider.set_handles(low_val, low_val)
-        else:
-            # determine which slider should move. We don't want both to be set, becuase it will
-            # override any fine-tuning on both sliders.
-            if max(self._selected_states) == state_id or max(self._selected_states) + 1 == state_id:
-                high_val = (max(self._selected_states) + 1) * (max(self._state_ranges[-1]) / 5)
-            if min(self._selected_states) == state_id or min(self._selected_states) - 1 == state_id:
-                low_val = min(self._selected_states) * (max(self._state_ranges[-1]) / 5)
-            self._slider.slider.set_handles(low_val, high_val)
-
-    def range_update(self, low: int, high: int, scatter_option: int | None = None) -> None:
-        """called whenever the slider range updates. scatter_option is either 0 (initial click),
-        None (currently sliding), or 1 (mouse released)"""
+    def range_update(self, low: int, high: int) -> None:
+        """called whenever the slider range updates."""
         self._graph.update_graph_limits(low, high)
-        if scatter_option is not None:
-            self._graph.update_scatter_limits(scatter_option)
+

@@ -84,7 +84,7 @@ class SliderWidget(QWidget):
             self.dragging = "low"
         elif abs(x - high_x) <= self.handle_radius:
             self.dragging = "high"
-        self._parent.range_update(self.low_value, self.high_value, scatter_option=0)
+        self._parent.range_update(self.low_value, self.high_value)
 
     def mouseMoveEvent(self, event):
         if self.dragging is None:
@@ -110,7 +110,6 @@ class SliderWidget(QWidget):
 
     def mouseReleaseEvent(self, event):  # noqa: ARG002
         self.dragging = None
-        self._parent.range_update(self.low_value, self.high_value, scatter_option=1)
 
     def _value_to_x(self, value):
         width = self.width()
@@ -132,8 +131,8 @@ class SliderWidget(QWidget):
         # seems that keeping high as float works, but low as float will be from -maxint to +maxint
         self.low_value = int(low_value)
         self.high_value = int(high_value)
-        # we dont emit the signal because we want to specifically say that the scatter option = 1
-        self._parent.range_update(self.low_value, self.high_value, scatter_option=1)
+
+        self.rangeChanged.emit(low_value, high_value)
         self.update()
 
     def _on_range_change(self, low, high):

@@ -1,5 +1,4 @@
 """."""
-
 import re
 from typing import TYPE_CHECKING
 
@@ -61,4 +60,4 @@ class DataSelector(GraphicsLayout):
             self._checked_columns.append(self._header_dict[item.text()])
         if item.checkState() == Qt.CheckState.Unchecked:
             self._checked_columns.remove(self._header_dict[item.text()])
-        self._parent.update_plot(self._checked_columns)
+        self._parent.data_selector_updated(self._checked_columns)

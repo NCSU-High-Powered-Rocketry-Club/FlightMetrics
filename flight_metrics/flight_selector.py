@@ -53,6 +53,6 @@ class FlightSelector(GraphicsLayout):
             self._checked_flights.append(item.text().strip())
         if item.checkState() == Qt.CheckState.Unchecked:
             self._checked_flights.remove(item.text().strip())
-        self._parent.update_data_manager(sorted(self._checked_flights))
+        self._parent.flight_selector_updated(sorted(self._checked_flights))
 
 

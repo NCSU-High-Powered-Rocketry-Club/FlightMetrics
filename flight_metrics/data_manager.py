@@ -39,9 +39,9 @@ class DataManager:
             unique_headers = headers[0]
             for header_index in range(len(headers) - 1):
                 unique_headers.union(headers[header_index + 1])
-            self._parent.update_data(unique_headers)
+            self._parent._data_selector.update_headers(unique_headers)
 
-    def get_columns(self, x_axis: str, headers: list) -> list[list]:
+    def get_data(self, x_axis: str, headers: list) -> list[list]:
         """Using the selected x axis and y axis data to plot, get the data and return as
         two or more (if multiple selected headers) lists in a list"""
         x_axis = "row_num" # default until I implement others
@@ -52,10 +52,23 @@ class DataManager:
         y_list = []
         for num_header, header in enumerate(headers):
             y_list.append([])
-            for num_df, df in enumerate(self._datasets):
-                y_list[num_header].append([])
-                y_list[num_header][num_df].append(df[header].tolist())
-        return list[x_list,y_list]
+            for df in self._datasets:
+                y_list[num_header].append(df[header].tolist())
+
+
+        x = np.array(x_list)
+        #TODO: Don't just plot one line
+        y = np.array(y_list[0][0])
+
+        mask = ~np.isnan(y)
+
+        x = x[mask].tolist()
+        y = y[mask].tolist()
+        return [x,y]
+
+    def update_state_rows(self) -> None:
+        """Updates the """
+
 
 
 
