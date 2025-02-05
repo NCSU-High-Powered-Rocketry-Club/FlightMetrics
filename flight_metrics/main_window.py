@@ -19,8 +19,13 @@ class MainWindow(GraphicsView):
         layout = GraphicsLayout(border=(100, 100, 100))
         self.setCentralItem(layout)
         self._layout = layout
-        self._data_manager = DataManager(self)
+        self.data_manager = DataManager()
         self._set_layouts()
+
+        self.flight_selector.flight_changed.connect(self.data_manager.update_flights)
+        self.data_manager.datasets_changed.connect(self.data_selector.update_fields)
+        self.data_manager.datasets_changed.connect(self.plot_container.update_state_rows)
+        self.data_selector.fields_changed.connect(self.data_manager.get_data)
 
     def _set_layouts(self) -> None:
         """Configures the main window's layout and initializes the plot, flight selector, and
@@ -35,53 +40,53 @@ class MainWindow(GraphicsView):
         right_layout.setFixedWidth(300)
 
         # adding launch data selector on left side
-        self.flight_selector = FlightSelector(self)
+        self.flight_selector = FlightSelector()
         left_layout.addItem(self.flight_selector)
 
         # adding plot container in middle
-        self._plot_container = PlotContainer(parent=self, data_manager=self._data_manager)
-        mid_layout.addItem(self._plot_container)
+        self.plot_container = PlotContainer(parent=self, data_manager=self.data_manager)
+        mid_layout.addItem(self.plot_container)
 
         # adding data selector to right
-        self._data_selector = DataSelector(self)
-        right_layout.addItem(self._data_selector)
+        self.data_selector = DataSelector(self)
+        right_layout.addItem(self.data_selector)
 
     def flight_selector_updated(self, log_names: list[str]) -> None:
         """when a new flight is selected or removed in flight selector, this method is called
         which tells the data manager to refresh the available data sets"""
         # log names is a list of the names of the logs, in title case with spaces instead of
         # underscores, and some leading whitespace.
-        self._data_manager.refresh_data(log_names)
+        self.data_manager.refresh_data(log_names)
 
     def data_selector_updated(self, columns: list) -> None:
         """Updates the plot with the currently selected data."""
-        data = self._data_manager.get_data(self, columns)
+        data = self.data_manager.get_data(self, columns)
         if data[1]:
-            self._plot_container._graph.set_graph_data(data[0], data[1])
+            self.plot_container._graph.set_graph_data(data[0], data[1])
         else:
-            self._plot_container._graph.set_graph_data([], [])
-        slider = self._plot_container._slider.slider
+            self.plot_container._graph.set_graph_data([], [])
+        slider = self.plot_container._slider.slider
         slider.high_value = min(slider.high_value, len(data[0]))
         slider.low_value = 1 if slider.low_value > len(data[0]) else slider.low_value
         slider.max_value = len(data[0])
         slider.update()
 
-    def state_button_updated(self, selected_states: list, new_state: int) -> None:
-        """When a valid state button is selected, this moves the slider"""
-        slider = self._plot_container._slider.slider
+    # def state_button_updated(self, selected_states: list, new_state: int) -> None:
+    #     """When a valid state button is selected, this moves the slider"""
+    #     slider = self.plot_container._slider.slider
 
-        low_val = slider.low_value
-        high_val = slider.high_value
+    #     low_val = slider.low_value
+    #     high_val = slider.high_value
 
-        if not selected_states:
-            # If the list is empty, min() and max() will error, so instead just set the handles
-            # to whatever the minimum value currently is.
-            slider.set_handles(low_val, low_val)
-        else:
-            # determine which slider should move. We don't want both to be set, becuase it will
-            # override any fine-tuning on both sliders.
-            if max(selected_states) == new_state or max(selected_states) + 1 == new_state:
-                high_val = (max(selected_states) + 1) * (max(state_ranges[-1]) / 5)
-            if min(selected_states) == new_state or min(selected_states) - 1 == new_state:
-                low_val = min(selected_states) * (max(state_ranges[-1]) / 5)
-            slider.set_handles(low_val, high_val)
+    #     if not selected_states:
+    #         # If the list is empty, min() and max() will error, so instead just set the handles
+    #         # to whatever the minimum value currently is.
+    #         slider.set_handles(low_val, low_val)
+    #     else:
+    #         # determine which slider should move. We don't want both to be set, becuase it will
+    #         # override any fine-tuning on both sliders.
+    #         if max(selected_states) == new_state or max(selected_states) + 1 == new_state:
+    #             high_val = (max(selected_states) + 1) * (max(state_ranges[-1]) / 5)
+    #         if min(selected_states) == new_state or min(selected_states) - 1 == new_state:
+    #             low_val = min(selected_states) * (max(state_ranges[-1]) / 5)
+    #         slider.set_handles(low_val, high_val)

@@ -15,7 +15,7 @@ def run_analyzer() -> None:
     win.show()
 
     # We want to load the data after everything is shown, so it feels more responsive
-    win._data_manager._load_logs()
+    win.data_manager._load_logs()
     with Path.open("flight_metrics/style.qss") as f:
         stylesheet = f.read()
     app.setStyleSheet(stylesheet)

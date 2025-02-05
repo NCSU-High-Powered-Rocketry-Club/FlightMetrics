@@ -100,7 +100,7 @@ class PullDataButton(QPushButton):
         log_files = sorted(logs_dir.glob("log_*.csv"))
 
         # Take the last logs, same length as LAUNCH_PATHS
-        latest_logs = log_files[len(log_files)-len(LAUNCH_PATHS) :]
+        latest_logs = log_files[len(log_files) - len(LAUNCH_PATHS) :]
         if len(latest_logs) < len(LAUNCH_PATHS):
             print(
                 f"Warning: Only found {len(latest_logs)} log files, expected {len(LAUNCH_PATHS)}."

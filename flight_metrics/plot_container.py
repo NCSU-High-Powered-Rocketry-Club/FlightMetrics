@@ -1,6 +1,8 @@
 """."""
+
 from typing import TYPE_CHECKING
 
+import pandas as pd
 from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget
 
@@ -22,25 +24,7 @@ class PlotContainer(GraphicsLayout):
         self._data_manager: DataManager = data_manager
         self._buttons: list[StateButton] = []  # the state button objects
         self._selected_states: list = [0, 1, 2, 3, 4]  # the currently selected states
-        # a list of the end row number of each state
-        self._state_ranges: list[list[int]] = [
-            [
-                10000,
-            ],
-            [
-                14000,
-            ],
-            [
-                40000,
-            ],
-            [
-                200000,
-            ],
-            [
-                205000,
-            ],
-        ]
-
+        self._state_ranges: list[tuple] = [(0, 0, 0, 0, 0)]
         self._setup()
 
     def _setup(self) -> None:
@@ -77,9 +61,9 @@ class PlotContainer(GraphicsLayout):
         self._slider = RangeSlider(
             parent=self,
             min_value=0,
-            max_value=max(self._state_ranges[-1]),
+            max_value=10000,
             start_min=0,
-            start_max=max(self._state_ranges[-1]),
+            start_max=10000,
         )
         self._toolbar_layout.addItem(self._slider, row=1, col=0, colspan=5)
 
@@ -110,8 +94,15 @@ class PlotContainer(GraphicsLayout):
                 ) if state_id in self._selected_states else self._selected_states.append(state_id)
                 self._parent.state_button_updated(self._selected_states, state_id)
 
+    def update_state_rows(self, datasets: list[pd.DataFrame]) -> None:
+        """When a new dataset is selected, update the row number range of each flight state
+        for each dataset."""
+        state_cols = [df["state_letter"] for df in datasets]
+        dataset_state_ranges = [
+            tuple(state_col.index[state_col != state_col.shift(-1)]) for state_col in state_cols
+        ]
+        self._state_ranges = tuple(map(list, zip(*dataset_state_ranges, strict=False)))
 
     def range_update(self, low: int, high: int) -> None:
         """called whenever the slider range updates."""
         self._graph.update_graph_limits(low, high)
-

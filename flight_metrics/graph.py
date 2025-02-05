@@ -10,7 +10,7 @@ class Graph(PlotWidget):
     def __init__(self):
         super().__init__()
 
-        self._x, self._y = [],[]
+        self._x, self._y = [], []
         self._plot_item: PlotItem = self.plot(self._x, self._y, pen="w")
 
     def update_graph_limits(self, min_x: int, max_x: int):
@@ -22,5 +22,4 @@ class Graph(PlotWidget):
         """plots the data"""
         self._x = x
         self._y = y
-        self.update_graph_limits(0,len(self._y))
-
+        self.update_graph_limits(0, len(self._y))
