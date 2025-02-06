@@ -1,9 +1,9 @@
 """."""
 
-import colorsys
-
 import numpy as np
 from pyqtgraph import PlotItem, PlotWidget
+
+from flight_metrics.constants import GRAPH_COLORS
 
 
 class Graph(PlotWidget):
@@ -51,10 +51,5 @@ class Graph(PlotWidget):
                 i += 1
 
     def _set_colors(self, data: list[list[tuple]]) -> list:
-        num_data = 0
-        for header_data_list in data:
-            num_data += len(header_data_list)
-        return [
-            tuple(int(c * 255) for c in colorsys.hsv_to_rgb(i / num_data, 1, 1))
-            for i in range(num_data)
-        ]
+        num_data = sum(len(header_data_list) for header_data_list in data)  # Count total entries
+        return [GRAPH_COLORS[i % len(GRAPH_COLORS)] for i in range(num_data)]

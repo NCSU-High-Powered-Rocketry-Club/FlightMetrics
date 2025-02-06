@@ -50,6 +50,3 @@ class DataManager(QObject):
                 plot_pair = (x_unfiltered, data_with_nan)
                 data_list[num_header].append(plot_pair)
         self.data_ready.emit(data_list)
-
-    def update_state_rows(self) -> None:
-        """Updates the"""

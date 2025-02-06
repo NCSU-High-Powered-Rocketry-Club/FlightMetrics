@@ -51,7 +51,6 @@ class DataSelector(GraphicsLayout):
     def update_fields(self, datasets: list[pd.DataFrame]) -> None:
         """Updates the available fields to plot, called whenever a new dataset is added or
         removed"""
-        print("test")
         # making a set of the headers in each dataset
         headers = [set(df.columns.to_list()) for df in datasets]
         # combining all the sets into one set
@@ -62,8 +61,6 @@ class DataSelector(GraphicsLayout):
             self._header_dict = self.format_headers(list(unique_headers))
         else:
             self._header_dict = {}
-        self.list_widget.clear()
-        self._checked_columns = []
         self.fields_changed.emit(self._checked_columns)
 
         for column in sorted(self._header_dict):

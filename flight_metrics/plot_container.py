@@ -27,6 +27,8 @@ class PlotContainer(GraphicsLayout):
 
         self.button_clicked.connect(self._slider.slider.state_button_update)
         self.state_range_updated.connect(self.graph.set_graph_state_data)
+
+
         self._slider.slider.rangeChanged.connect(self.graph.update_graph_limits)
 
     def _setup(self) -> None:
