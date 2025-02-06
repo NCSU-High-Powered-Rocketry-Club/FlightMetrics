@@ -13,6 +13,7 @@ from flight_metrics.state_button import StateButton
 
 class PlotContainer(GraphicsLayout):
     """."""
+
     button_clicked = pyqtSignal(int, int)
     state_range_updated = pyqtSignal(tuple, list)
 
@@ -21,7 +22,7 @@ class PlotContainer(GraphicsLayout):
         self._data_manager: DataManager = data_manager
         self._buttons: list[StateButton] = []  # the state button objects
         self._selected_states: list = [0, 1, 2, 3, 4]  # the currently selected states
-        self._state_ranges: tuple[list] = ([0],[0],[0],[0],[0])
+        self._state_ranges: tuple[list] = ([0], [0], [0], [0], [0])
         self._setup()
 
         self.button_clicked.connect(self._slider.slider.state_button_update)
@@ -97,7 +98,7 @@ class PlotContainer(GraphicsLayout):
         if not self._selected_states:
             # If the list is empty, the low and high will be 0 and 0. The slider will be manually
             # overriden so that both handles aren't on top of eachother though
-            self.button_clicked.emit(0,0)
+            self.button_clicked.emit(0, 0)
         else:
             low_val = self._slider.slider.low_value
             high_val = self._slider.slider.high_value

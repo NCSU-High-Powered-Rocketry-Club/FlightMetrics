@@ -49,9 +49,9 @@ class FlightSelector(GraphicsLayout):
             list_item.setFlags(list_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             list_item.setCheckState(Qt.CheckState.Unchecked)
             self.list_widget.addItem(list_item)
-        self.list_widget.itemChanged.connect(self.item_changed)
+        self.list_widget.itemChanged.connect(self.fs_item_changed)
 
-    def item_changed(self, item: QListWidgetItem):
+    def fs_item_changed(self, item: QListWidgetItem):
         """When a flight checkbox is checked or unchecked, emit to the signal with the
         currently selected flights"""
         if item.checkState() == Qt.CheckState.Checked:

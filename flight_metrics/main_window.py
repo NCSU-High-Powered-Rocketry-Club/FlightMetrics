@@ -65,4 +65,3 @@ class MainWindow(GraphicsView):
         slider.low_value = 1 if slider.low_value > len(data[0]) else slider.low_value
         slider.max_value = len(data[0])
         slider.update()
-

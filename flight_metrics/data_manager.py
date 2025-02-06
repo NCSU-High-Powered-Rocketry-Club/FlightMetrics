@@ -46,8 +46,7 @@ class DataManager(QObject):
             for df in self._datasets:
                 data_with_nan = np.array(df[header].tolist())
                 x_unfiltered = np.arange(len(df))
-                #mask = ~np.isnan(data_with_nan)
-                #plot_pair = (x_unfiltered[mask].tolist(), data_with_nan[mask].tolist())
+
                 plot_pair = (x_unfiltered, data_with_nan)
                 data_list[num_header].append(plot_pair)
         self.data_ready.emit(data_list)

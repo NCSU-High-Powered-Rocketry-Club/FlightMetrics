@@ -28,6 +28,7 @@ class DataSelector(GraphicsLayout):
         self.addItem(proxy_list)
         self.list_widget.setObjectName("data_selector_list")
         self._checked_columns = []
+        self.list_widget.itemChanged.connect(self.ds_item_changed)
 
     def format_headers(self, headers: list[str]) -> dict:
         """Takes in a list of unformatted headers and formats them to be title case"""
@@ -50,6 +51,7 @@ class DataSelector(GraphicsLayout):
     def update_fields(self, datasets: list[pd.DataFrame]) -> None:
         """Updates the available fields to plot, called whenever a new dataset is added or
         removed"""
+        print("test")
         # making a set of the headers in each dataset
         headers = [set(df.columns.to_list()) for df in datasets]
         # combining all the sets into one set
@@ -61,19 +63,21 @@ class DataSelector(GraphicsLayout):
         else:
             self._header_dict = {}
         self.list_widget.clear()
+        self._checked_columns = []
+        self.fields_changed.emit(self._checked_columns)
 
         for column in sorted(self._header_dict):
             list_item = QListWidgetItem(column)
             list_item.setFlags(list_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             list_item.setCheckState(Qt.CheckState.Unchecked)
             self.list_widget.addItem(list_item)
-        self.list_widget.itemChanged.connect(self.item_changed)
 
-    def item_changed(self, item: QListWidgetItem) -> None:
+    def ds_item_changed(self, item: QListWidgetItem) -> None:
         """When a box is ticked, update the internal list of ticked boxes, and call
         main window to update the plot"""
         if item.checkState() == Qt.CheckState.Checked:
             self._checked_columns.append(self._header_dict[item.text()])
         if item.checkState() == Qt.CheckState.Unchecked:
             self._checked_columns.remove(self._header_dict[item.text()])
+        print(self._checked_columns)
         self.fields_changed.emit(self._checked_columns)
