@@ -41,7 +41,7 @@ class SliderWidget(QWidget):
         self.dragging = None
 
         # slot for the rangeChanged signal to connect to
-        #self.rangeChanged.connect(self._on_range_change)
+        self.rangeChanged.connect(self.update)
 
     def paintEvent(self, _event):
         painter = QPainter(self)
@@ -105,7 +105,6 @@ class SliderWidget(QWidget):
             self.high_value = value
 
         self.rangeChanged.emit(self.low_value, self.high_value)
-        self.update()
 
     def mouseReleaseEvent(self, _event):
         self.dragging = None
@@ -128,14 +127,13 @@ class SliderWidget(QWidget):
     def set_range(self, datasets) -> None:
         """When a dataset is added or removed, update the range the slider can move to"""
         lengths = [len(df) for df in datasets]
-        self.max_value = max(lengths)
+        self.max_value = max(lengths) if lengths else 1
         self.high_value = min(self.high_value, self.max_value)
         # this only would occur if there are currently no datasets selected, in which case, we don't
         # care about preserving the user's current slider range
         if self.high_value == 1:
             self.high_value = self.max_value
         self.rangeChanged.emit(self.low_value, self.high_value)
-        self.update()
 
     def state_button_update(self, low: int, high: int) -> None:
         """."""
@@ -146,4 +144,3 @@ class SliderWidget(QWidget):
         self.low_value = low
         self.high_value = high
         self.rangeChanged.emit(low, high)
-        self.update()

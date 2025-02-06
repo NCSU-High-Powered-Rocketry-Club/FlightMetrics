@@ -53,10 +53,13 @@ class DataSelector(GraphicsLayout):
         # making a set of the headers in each dataset
         headers = [set(df.columns.to_list()) for df in datasets]
         # combining all the sets into one set
-        unique_headers = headers[0]
-        for header_index in range(len(headers) - 1):
-            unique_headers.union(headers[header_index + 1])
-        self._header_dict = self.format_headers(list(unique_headers))
+        if headers:
+            unique_headers = headers[0]
+            for header_index in range(len(headers) - 1):
+                unique_headers.union(headers[header_index + 1])
+            self._header_dict = self.format_headers(list(unique_headers))
+        else:
+            self._header_dict = {}
         self.list_widget.clear()
 
         for column in sorted(self._header_dict):

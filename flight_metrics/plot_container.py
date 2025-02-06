@@ -14,6 +14,7 @@ from flight_metrics.state_button import StateButton
 class PlotContainer(GraphicsLayout):
     """."""
     button_clicked = pyqtSignal(int, int)
+    state_range_updated = pyqtSignal(tuple, list)
 
     def __init__(self, data_manager: DataManager):
         super().__init__()
@@ -24,6 +25,8 @@ class PlotContainer(GraphicsLayout):
         self._setup()
 
         self.button_clicked.connect(self._slider.slider.state_button_update)
+        self.state_range_updated.connect(self.graph.set_graph_state_data)
+        self._slider.slider.rangeChanged.connect(self.graph.update_graph_limits)
 
     def _setup(self) -> None:
         self._plot_layout = self.addLayout(row=0, col=0)
@@ -32,9 +35,9 @@ class PlotContainer(GraphicsLayout):
         self.setSpacing(0)
 
         # graph setup
-        self._graph = Graph()
+        self.graph = Graph()
         proxy_widget = QGraphicsProxyWidget()
-        proxy_widget.setWidget(self._graph)
+        proxy_widget.setWidget(self.graph)
         self._plot_layout.addItem(proxy_widget)
         self._plot_layout.setBorder(100, 100, 100)
         self._plot_layout.setContentsMargins(0, 0, 0, 10)
@@ -107,8 +110,8 @@ class PlotContainer(GraphicsLayout):
             if button_id in (min_state, min_state - 1):
                 # indicates that the low value should be the one moving
                 low_val = 0 if min_state == 0 else min(self._state_ranges[min_state - 1])
-            print(f"low: {low_val}, high: {high_val}")
             self.button_clicked.emit(low_val, high_val)
+            self.state_range_updated.emit(self._state_ranges, self._selected_states)
 
     def update_state_rows(self, datasets: list[pd.DataFrame]) -> None:
         """When a new dataset is selected, update the row number range of each flight state
@@ -120,4 +123,3 @@ class PlotContainer(GraphicsLayout):
         ]
         # tuple of lists, each list is the row # for a specific state, list length is # of datasets
         self._state_ranges = tuple(map(list, zip(*dataset_state_ranges, strict=False)))
-

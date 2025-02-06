@@ -10,16 +10,38 @@ class Graph(PlotWidget):
     def __init__(self):
         super().__init__()
 
-        self._x, self._y = [], []
-        self._plot_item: PlotItem = self.plot(self._x, self._y, pen="w")
+        self._data = [[()]]
+        self._plot_item: PlotItem = self.plot(self._data[0][0], self._data[0][0], pen="w")
+        #self.disableAutoRange()
 
     def update_graph_limits(self, min_x: int, max_x: int):
-        self._x_lim = self._x[min_x:max_x]
-        self._y_lim = self._y[min_x:max_x]
-        self._plot_item.setData(self._x_lim, self._y_lim)
+        self.setXRange(min_x, max_x)
 
-    def set_graph_data(self, x: list, y: list):
-        """plots the data"""
-        self._x = x
-        self._y = y
-        self.update_graph_limits(0, len(self._y))
+    def set_graph_state_data(self, state_range: tuple[list], current_states: list):
+        """Called when a valid state button is clicked. Takes the current data, and limits the
+        range"""
+        self.clear()
+        for header_data_list in self._data:
+            for idx, xy_data in enumerate(header_data_list):
+                x_min = 0 if min(current_states) == 0 else state_range[min(current_states)-1][idx]
+                x_max = state_range[max(current_states)][idx]
+                filtered_data = self.filter_nan_values((xy_data[0][x_min:x_max], xy_data[1][x_min:x_max]))
+
+                self.plot(filtered_data[0], filtered_data[1])
+
+    def filter_nan_values(self, data_points: tuple[list]) -> tuple[list]:
+        mask = ~np.isnan(data_points[1])
+        return (data_points[0][mask].tolist(), data_points[1][mask].tolist())
+
+    def set_data(self, data: list[list[tuple]]):
+        """Called whenever new fields are selected"""
+        self._data = data
+        self.clear()
+        for header_data_list in data:
+            for xy_data in header_data_list:
+                filtered_data = self.filter_nan_values(xy_data)
+
+                self.plot(filtered_data[0], filtered_data[1])
+
+
+

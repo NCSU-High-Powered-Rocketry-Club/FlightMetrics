@@ -27,6 +27,7 @@ class MainWindow(GraphicsView):
         self.data_manager.datasets_changed.connect(self.plot_container.update_state_rows)
         self.data_manager.datasets_changed.connect(self.plot_container._slider.slider.set_range)
         self.data_selector.fields_changed.connect(self.data_manager.get_data)
+        self.data_manager.data_ready.connect(self.plot_container.graph.set_data)
 
     def _set_layouts(self) -> None:
         """Configures the main window's layout and initializes the plot, flight selector, and
@@ -51,13 +52,6 @@ class MainWindow(GraphicsView):
         # adding data selector to right
         self.data_selector = DataSelector(self)
         right_layout.addItem(self.data_selector)
-
-    def flight_selector_updated(self, log_names: list[str]) -> None:
-        """when a new flight is selected or removed in flight selector, this method is called
-        which tells the data manager to refresh the available data sets"""
-        # log names is a list of the names of the logs, in title case with spaces instead of
-        # underscores, and some leading whitespace.
-        self.data_manager.refresh_data(log_names)
 
     def data_selector_updated(self, columns: list) -> None:
         """Updates the plot with the currently selected data."""

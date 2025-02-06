@@ -13,6 +13,7 @@ class DataManager(QObject):
     """Manages the data sets and what data is given to the plotter"""
 
     datasets_changed = pyqtSignal(list)
+    data_ready = pyqtSignal(list)
 
     def __init__(self) -> None:
         super().__init__()
@@ -39,27 +40,17 @@ class DataManager(QObject):
     def get_data(self, headers: list) -> None:
         """Updated when a field is selected/removed. Gets the data and updates
         the signal with the columns to plot"""
-        x_axis = "row_num"  # default until I implement others
-        x_list = []
-        if x_axis == "row_num":
-            max_len = max([len(df) for df in self._datasets])
-            x_list = np.arange(max_len)
-
-        y_list = []
+        data_list = []
         for num_header, header in enumerate(headers):
-            y_list.append([])
+            data_list.append([])
             for df in self._datasets:
-                y_list[num_header].append(df[header].tolist())
-
-        x = np.array(x_list)
-        # TODO: Don't just plot one line
-        y = np.array(y_list[0][0])
-
-        mask = ~np.isnan(y)
-
-        x = x[mask].tolist()
-        y = y[mask].tolist()
-        return [x, y]
+                data_with_nan = np.array(df[header].tolist())
+                x_unfiltered = np.arange(len(df))
+                #mask = ~np.isnan(data_with_nan)
+                #plot_pair = (x_unfiltered[mask].tolist(), data_with_nan[mask].tolist())
+                plot_pair = (x_unfiltered, data_with_nan)
+                data_list[num_header].append(plot_pair)
+        self.data_ready.emit(data_list)
 
     def update_state_rows(self) -> None:
         """Updates the"""
