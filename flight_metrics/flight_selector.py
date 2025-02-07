@@ -45,7 +45,7 @@ class FlightSelector(GraphicsLayout):
         for flight_name in flights:
             # checkbox size is big, and without adding whitespace, the text gets overlapped
             # on the gui
-            list_item = QListWidgetItem("   " + flight_name)
+            list_item = QListWidgetItem("  " + flight_name)
             list_item.setFlags(list_item.flags() | Qt.ItemFlag.ItemIsUserCheckable)
             list_item.setCheckState(Qt.CheckState.Unchecked)
             self.list_widget.addItem(list_item)

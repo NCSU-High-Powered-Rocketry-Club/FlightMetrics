@@ -47,7 +47,7 @@ class PlotContainer(GraphicsLayout):
 
     def _setup_toolbar(self) -> None:
         """."""
-        self._toolbar_layout.setFixedHeight(200)
+        self._toolbar_layout.setFixedHeight(150)
         self._toolbar_layout.setBorder(100, 100, 100)
         self._toolbar_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -55,7 +55,7 @@ class PlotContainer(GraphicsLayout):
         button_names = ["Standby", "Motor Burn", "Coast", "Freefall", "Landed"]
         for i, name in enumerate(button_names):
             state_button = StateButton(self, name)
-            state_button.setMinimumHeight(50)
+            state_button.setMinimumHeight(40)
             self._buttons.append(state_button)
             self._toolbar_layout.addItem(state_button, row=0, col=i)
 

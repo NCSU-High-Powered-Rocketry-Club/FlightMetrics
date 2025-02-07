@@ -38,7 +38,7 @@ class MainWindow(GraphicsView):
         right_layout = self._layout.addLayout(row=0, col=2, rowspan=1)
 
         # setting column widths
-        left_layout.setFixedWidth(300)
+        left_layout.setFixedWidth(250)
         right_layout.setFixedWidth(300)
 
         # adding launch data selector on left side
