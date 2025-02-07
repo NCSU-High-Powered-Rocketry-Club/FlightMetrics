@@ -46,11 +46,11 @@ class MainWindow(GraphicsView):
         left_layout.addItem(self.flight_selector)
 
         # adding plot container in middle
-        self.plot_container = PlotContainer(data_manager=self.data_manager)
+        self.plot_container = PlotContainer()
         mid_layout.addItem(self.plot_container)
 
         # adding data selector to right
-        self.data_selector = DataSelector(self)
+        self.data_selector = DataSelector()
         right_layout.addItem(self.data_selector)
 
     def data_selector_updated(self, columns: list) -> None:

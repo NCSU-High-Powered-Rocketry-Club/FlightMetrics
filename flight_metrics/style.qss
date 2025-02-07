@@ -17,7 +17,7 @@ QListWidget::indicator::unchecked {
 }
 QListWidget::indicator::checked {
     border: 2px solid #ffdadada;
-    background-color: #ff898989;
+    background-color: #69f;
 }
 
 #data_selector_list {
@@ -36,6 +36,6 @@ QListWidget::indicator::checked {
 }
 #data_selector_list::indicator::checked {
     border: 2px solid #ffdadada;
-    background-color: #ff898989;
+    background-color: #69f;
 }
 

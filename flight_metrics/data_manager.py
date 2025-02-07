@@ -37,15 +37,22 @@ class DataManager(QObject):
         ]
         self.datasets_changed.emit(self._datasets)
 
-    def get_data(self, headers: list) -> None:
+    def get_data(self, x_field, y_fields: list) -> None:
         """Updated when a field is selected/removed. Gets the data and updates
         the signal with the columns to plot"""
+        if not x_field or not y_fields:
+            self.data_ready.emit([[()]])
+            return
         data_list = []
-        for num_header, header in enumerate(headers):
+        for num_header, header in enumerate(y_fields):
             data_list.append([])
             for df in self._datasets:
                 data_with_nan = np.array(df[header].tolist())
-                x_unfiltered = np.arange(len(df))
+                x_unfiltered = (
+                    np.arange(len(data_with_nan))
+                    if x_field == "row_num"
+                    else np.array(df[x_field].tolist())
+                )
 
                 plot_pair = (x_unfiltered, data_with_nan)
                 data_list[num_header].append(plot_pair)

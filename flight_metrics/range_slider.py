@@ -36,6 +36,7 @@ class SliderWidget(QWidget):
         self.high_value = start_max
         self.handle_radius = 8  # Size of draggable handles
         self.bar_height = 6  # Thickness of the bar
+        self.margin = self.handle_radius + 10
         self.setMinimumSize(300, 40)
         self.setMouseTracking(True)
         self.dragging = None
@@ -49,19 +50,21 @@ class SliderWidget(QWidget):
 
         width = self.width()
         height = self.height()
-        margin = self.handle_radius
 
-        low_x = margin + (self.low_value - self.min_value) / (self.max_value - self.min_value) * (
-            width - 2 * margin
-        )
-        high_x = margin + (self.high_value - self.min_value) / (self.max_value - self.min_value) * (
-            width - 2 * margin
-        )
+        low_x = self.margin + (self.low_value - self.min_value) / (
+            self.max_value - self.min_value
+        ) * (width - 2 * self.margin)
+        high_x = self.margin + (self.high_value - self.min_value) / (
+            self.max_value - self.min_value
+        ) * (width - 2 * self.margin)
 
         painter.setPen(QPen(Qt.PenStyle.NoPen))
         painter.setBrush(QBrush(QColor(200, 200, 200)))
         painter.drawRect(
-            margin, height // 2 - self.bar_height // 2, width - 2 * margin, self.bar_height
+            self.margin,
+            height // 2 - self.bar_height // 2,
+            width - 2 * self.margin,
+            self.bar_height,
         )
 
         painter.setBrush(QBrush(QColor(100, 150, 255)))
@@ -111,17 +114,16 @@ class SliderWidget(QWidget):
 
     def _value_to_x(self, value):
         width = self.width()
-        margin = self.handle_radius
-        return margin + (value - self.min_value) / (self.max_value - self.min_value) * (
-            width - 2 * margin
+        return self.margin + (value - self.min_value) / (self.max_value - self.min_value) * (
+            width - 2 * self.margin
         )
 
     def _x_to_value(self, x):
         width = self.width()
-        margin = self.handle_radius
-        x = max(margin, min(x, width - margin))
+        x = max(self.margin, min(x, width - self.margin))
         return round(
-            self.min_value + (x - margin) / (width - 2 * margin) * (self.max_value - self.min_value)
+            self.min_value
+            + (x - self.margin) / (width - 2 * self.margin) * (self.max_value - self.min_value)
         )
 
     def set_range(self, datasets) -> None:
