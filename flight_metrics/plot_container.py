@@ -5,7 +5,6 @@ from pyqtgraph import GraphicsLayout
 from pyqtgraph.Qt.QtCore import pyqtSignal
 from pyqtgraph.Qt.QtWidgets import QGraphicsProxyWidget
 
-from flight_metrics.data_manager import DataManager
 from flight_metrics.graph import Graph
 from flight_metrics.range_slider import RangeSlider
 from flight_metrics.state_button import StateButton
@@ -13,19 +12,20 @@ from flight_metrics.state_button import StateButton
 
 class PlotContainer(GraphicsLayout):
     """."""
+
     button_clicked = pyqtSignal(int, int)
     state_range_updated = pyqtSignal(tuple, list)
 
-    def __init__(self, data_manager: DataManager):
+    def __init__(self):
         super().__init__()
-        self._data_manager: DataManager = data_manager
         self._buttons: list[StateButton] = []  # the state button objects
         self._selected_states: list = [0, 1, 2, 3, 4]  # the currently selected states
-        self._state_ranges: tuple[list] = ([0],[0],[0],[0],[0])
+        self._state_ranges: tuple[list] = ([0], [0], [0], [0], [0])
         self._setup()
 
         self.button_clicked.connect(self._slider.slider.state_button_update)
         self.state_range_updated.connect(self.graph.set_graph_state_data)
+
         self._slider.slider.rangeChanged.connect(self.graph.update_graph_limits)
 
     def _setup(self) -> None:
@@ -47,7 +47,7 @@ class PlotContainer(GraphicsLayout):
 
     def _setup_toolbar(self) -> None:
         """."""
-        self._toolbar_layout.setFixedHeight(200)
+        self._toolbar_layout.setFixedHeight(150)
         self._toolbar_layout.setBorder(100, 100, 100)
         self._toolbar_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -55,7 +55,7 @@ class PlotContainer(GraphicsLayout):
         button_names = ["Standby", "Motor Burn", "Coast", "Freefall", "Landed"]
         for i, name in enumerate(button_names):
             state_button = StateButton(self, name)
-            state_button.setMinimumHeight(50)
+            state_button.setMinimumHeight(40)
             self._buttons.append(state_button)
             self._toolbar_layout.addItem(state_button, row=0, col=i)
 
@@ -97,7 +97,7 @@ class PlotContainer(GraphicsLayout):
         if not self._selected_states:
             # If the list is empty, the low and high will be 0 and 0. The slider will be manually
             # overriden so that both handles aren't on top of eachother though
-            self.button_clicked.emit(0,0)
+            self.button_clicked.emit(0, 0)
         else:
             low_val = self._slider.slider.low_value
             high_val = self._slider.slider.high_value

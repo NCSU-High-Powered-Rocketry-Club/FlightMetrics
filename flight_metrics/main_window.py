@@ -38,7 +38,7 @@ class MainWindow(GraphicsView):
         right_layout = self._layout.addLayout(row=0, col=2, rowspan=1)
 
         # setting column widths
-        left_layout.setFixedWidth(300)
+        left_layout.setFixedWidth(250)
         right_layout.setFixedWidth(300)
 
         # adding launch data selector on left side
@@ -46,11 +46,11 @@ class MainWindow(GraphicsView):
         left_layout.addItem(self.flight_selector)
 
         # adding plot container in middle
-        self.plot_container = PlotContainer(data_manager=self.data_manager)
+        self.plot_container = PlotContainer()
         mid_layout.addItem(self.plot_container)
 
         # adding data selector to right
-        self.data_selector = DataSelector(self)
+        self.data_selector = DataSelector()
         right_layout.addItem(self.data_selector)
 
     def data_selector_updated(self, columns: list) -> None:
@@ -65,4 +65,3 @@ class MainWindow(GraphicsView):
         slider.low_value = 1 if slider.low_value > len(data[0]) else slider.low_value
         slider.max_value = len(data[0])
         slider.update()
-

@@ -1,31 +1,39 @@
 QWidget {
     background-color: #ff292929;
+    color:rgb(255, 255, 255);
 }
 QListWidget {
-    font-size: 25px;
+    font-size: 18px;
     color: #ffdadada;
 }
 QListWidget::item {
     margin-left: 0px;
+    margin-bottom: 3px;
+    margin-top: 3px;
 }
 QListWidget::indicator {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
 }
 QListWidget::indicator::unchecked {
     border: 1px solid #ffdadada;
 }
 QListWidget::indicator::checked {
     border: 2px solid #ffdadada;
-    background-color: #ff898989;
+    background-color: #69f;
+}
+QPushButton {
+    font-size: 18px;
 }
 
 #data_selector_list {
-    font-size: 15px;
+    font-size: 14px;
     color: #ffdadada;
 }
 #data_selector_list::item {
     margin-left: 0px;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
 #data_selector_list::indicator {
     width: 15px;
@@ -36,6 +44,6 @@ QListWidget::indicator::checked {
 }
 #data_selector_list::indicator::checked {
     border: 2px solid #ffdadada;
-    background-color: #ff898989;
+    background-color: #69f;
 }
 
