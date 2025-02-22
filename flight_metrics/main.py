@@ -1,5 +1,6 @@
 """The main file"""
 
+import os
 import sys
 from pathlib import Path
 
@@ -7,7 +8,7 @@ import pyqtgraph as pg
 
 from flight_metrics.main_window import MainWindow
 
-
+os.environ["QT_QPA_PLATFORM"] = "xcb" # for WSL to work. not sure if it works on Unix systems
 def run_analyzer() -> None:
     """Entry point to run the analyzer. Starts when run with `uv run plot`."""
     app = pg.mkQApp("FlightMetrics")
