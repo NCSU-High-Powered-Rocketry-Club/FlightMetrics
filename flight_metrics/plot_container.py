@@ -23,10 +23,10 @@ class PlotContainer(GraphicsLayout):
         self._state_ranges: tuple[list] = ([0], [0], [0], [0], [0])
         self._setup()
 
-        self.button_clicked.connect(self._slider.slider.state_button_update)
+        self.button_clicked.connect(self._slider.state_button_update)
         self.state_range_updated.connect(self.graph.set_graph_state_data)
 
-        self._slider.slider.rangeChanged.connect(self.graph.update_graph_limits)
+        self._slider.rangeChanged.connect(self.graph.update_graph_limits)
 
     def _setup(self) -> None:
         self._plot_layout = self.addLayout(row=0, col=0)
@@ -60,13 +60,12 @@ class PlotContainer(GraphicsLayout):
             self._toolbar_layout.addItem(state_button, row=0, col=i)
 
         self._slider = RangeSlider(
-            parent=self,
             min_value=0,
             max_value=1,
             start_min=0,
             start_max=1,
         )
-        self._toolbar_layout.addItem(self._slider, row=1, col=0, colspan=5)
+        self.graph.addItem(self._slider, row=1, col=0, colspan=5)
 
     def check_new_state(self, button_id: int) -> None:
         """Determines if the newly selected state is valid. It is invalid if there are gaps in the
@@ -99,8 +98,8 @@ class PlotContainer(GraphicsLayout):
             # overriden so that both handles aren't on top of eachother though
             self.button_clicked.emit(0, 0)
         else:
-            low_val = self._slider.slider.low_value
-            high_val = self._slider.slider.high_value
+            low_val = self._slider.low_value
+            high_val = self._slider.high_value
             max_state = max(self._selected_states)
             min_state = min(self._selected_states)
 

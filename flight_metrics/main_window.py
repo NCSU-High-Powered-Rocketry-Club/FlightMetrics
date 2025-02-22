@@ -25,7 +25,7 @@ class MainWindow(GraphicsView):
         self.flight_selector.flight_changed.connect(self.data_manager.update_flights)
         self.data_manager.datasets_changed.connect(self.data_selector.update_fields)
         self.data_manager.datasets_changed.connect(self.plot_container.update_state_rows)
-        self.data_manager.datasets_changed.connect(self.plot_container._slider.slider.set_range)
+        self.data_manager.datasets_changed.connect(self.plot_container._slider.set_range)
         self.data_selector.fields_changed.connect(self.data_manager.get_data)
         self.data_manager.data_ready.connect(self.plot_container.graph.set_data)
 
@@ -60,7 +60,7 @@ class MainWindow(GraphicsView):
             self.plot_container._graph.set_graph_data(data[0], data[1])
         else:
             self.plot_container._graph.set_graph_data([], [])
-        slider = self.plot_container._slider.slider
+        slider = self.plot_container._slider
         slider.high_value = min(slider.high_value, len(data[0]))
         slider.low_value = 1 if slider.low_value > len(data[0]) else slider.low_value
         slider.max_value = len(data[0])
